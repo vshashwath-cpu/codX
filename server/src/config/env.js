@@ -12,6 +12,9 @@ if (existsSync(envPath)) {
   config({ path: envPath });
 }
 
+const isVercel = Boolean(process.env.VERCEL);
+const storageBase = isVercel ? path.join('/tmp', 'storage') : path.join(rootDir, 'storage');
+
 const env = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: parseInt(process.env.PORT, 10) || 3000,
@@ -20,14 +23,16 @@ const env = {
   OPENROUTER_MODEL: process.env.OPENROUTER_MODEL || 'google/gemini-2.0-flash-001',
   BACKUP_ON_START: process.env.BACKUP_ON_START === 'true',
   MAX_BACKUPS: parseInt(process.env.MAX_BACKUPS, 10) || 10,
+  IS_VERCEL: isVercel,
 
   // Derived paths
   ROOT_DIR: rootDir,
-  STORAGE_DIR: path.join(rootDir, 'storage'),
-  DATA_DIR: path.join(rootDir, 'storage', 'data'),
-  UPLOADS_DIR: path.join(rootDir, 'storage', 'uploads'),
-  BACKUPS_DIR: path.join(rootDir, 'storage', 'backups'),
-  SESSIONS_DIR: path.join(rootDir, 'storage', 'sessions'),
+  STORAGE_DIR: storageBase,
+  DATA_DIR: path.join(storageBase, 'data'),
+  UPLOADS_DIR: path.join(storageBase, 'uploads'),
+  BACKUPS_DIR: path.join(storageBase, 'backups'),
+  SESSIONS_DIR: path.join(storageBase, 'sessions'),
+  SEED_DATA_DIR: path.join(rootDir, 'storage', 'data'),
   CLIENT_DIR: path.join(rootDir, 'client'),
 };
 

@@ -33,17 +33,29 @@ export async function initializeStorage() {
         }
       }
     } catch {
-      // File doesn't exist — create it
-      const initialContent = collection === 'metadata'
-        ? JSON.stringify({
-            version: '1.0.0',
-            createdAt: new Date().toISOString(),
-            lastStartup: new Date().toISOString(),
-          }, null, 2)
-        : JSON.stringify([], null, 2);
+      // File doesn't exist in data directory
+      let copiedFromSeed = false;
+      if (env.SEED_DATA_DIR && env.SEED_DATA_DIR !== env.DATA_DIR) {
+        try {
+          const seedFilePath = path.join(env.SEED_DATA_DIR, `${collection}.json`);
+          await fs.copyFile(seedFilePath, filePath);
+          console.log(`[Storage] Initialized ${collection}.json from seed data`);
+          copiedFromSeed = true;
+        } catch { /* seed file does not exist, fallback to empty */ }
+      }
 
-      await fs.writeFile(filePath, initialContent, 'utf-8');
-      console.log(`[Storage] Created ${collection}.json`);
+      if (!copiedFromSeed) {
+        const initialContent = collection === 'metadata'
+          ? JSON.stringify({
+              version: '1.0.0',
+              createdAt: new Date().toISOString(),
+              lastStartup: new Date().toISOString(),
+            }, null, 2)
+          : JSON.stringify([], null, 2);
+
+        await fs.writeFile(filePath, initialContent, 'utf-8');
+        console.log(`[Storage] Created ${collection}.json`);
+      }
     }
   }
 
