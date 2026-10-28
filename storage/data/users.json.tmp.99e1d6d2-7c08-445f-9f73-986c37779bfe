@@ -1,0 +1,52 @@
+[
+  {
+    "id": "demo-student-0001-0001-000000000001",
+    "email": "student@demo.cpg",
+    "password": "$2b$12$jF.5hDAmQkczSGKAX.GOlubtNAjPiAq/l6VkqgCKaosz0TzdQZKB2",
+    "name": "Aarav Sharma",
+    "role": "student",
+    "status": "active",
+    "createdAt": "2026-10-28T18:20:33.671Z",
+    "updatedAt": "2026-10-28T18:20:33.671Z"
+  },
+  {
+    "id": "demo-student-0002-0002-000000000002",
+    "email": "priya@demo.cpg",
+    "password": "$2b$12$jF.5hDAmQkczSGKAX.GOlubtNAjPiAq/l6VkqgCKaosz0TzdQZKB2",
+    "name": "Priya Patel",
+    "role": "student",
+    "status": "active",
+    "createdAt": "2026-10-28T18:20:33.671Z",
+    "updatedAt": "2026-10-28T18:20:33.671Z"
+  },
+  {
+    "id": "demo-student-0003-0003-000000000003",
+    "email": "rahul@demo.cpg",
+    "password": "$2b$12$jF.5hDAmQkczSGKAX.GOlubtNAjPiAq/l6VkqgCKaosz0TzdQZKB2",
+    "name": "Rahul Kumar",
+    "role": "student",
+    "status": "active",
+    "createdAt": "2026-10-28T18:20:33.671Z",
+    "updatedAt": "2026-10-28T18:20:33.671Z"
+  },
+  {
+    "id": "demo-faculty-0001-0001-000000000001",
+    "email": "faculty@demo.cpg",
+    "password": "$2b$12$jF.5hDAmQkczSGKAX.GOlubtNAjPiAq/l6VkqgCKaosz0TzdQZKB2",
+    "name": "Dr. Meera Nair",
+    "role": "faculty",
+    "status": "active",
+    "createdAt": "2026-10-28T18:20:33.671Z",
+    "updatedAt": "2026-10-28T18:20:33.671Z"
+  },
+  {
+    "id": "5ef6f3a0-f0bb-4e30-8e81-fd97e3bac407",
+    "email": "admin@cpg.local",
+    "password": "$2b$12$p3Avg4w1h8PB4msJ6SNpVuO2i.2RiRtsqpKvqFu2zpJbO9nBeX1Ty",
+    "name": "System Administrator",
+    "role": "admin",
+    "status": "active",
+    "createdAt": "2026-10-28T18:20:39.727Z",
+    "updatedAt": "2026-10-28T18:20:39.729Z"
+  }
+]

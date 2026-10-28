@@ -1,0 +1,140 @@
+[
+  {
+    "id": "demo-student-0001-0001-000000000001",
+    "email": "student@demo.cpg",
+    "password": "$2b$12$jF.5hDAmQkczSGKAX.GOlubtNAjPiAq/l6VkqgCKaosz0TzdQZKB2",
+    "name": "Aarav Sharma",
+    "role": "student",
+    "status": "active",
+    "createdAt": "2026-10-28T18:20:33.671Z",
+    "updatedAt": "2026-10-28T18:20:33.671Z"
+  },
+  {
+    "id": "demo-student-0002-0002-000000000002",
+    "email": "priya@demo.cpg",
+    "password": "$2b$12$jF.5hDAmQkczSGKAX.GOlubtNAjPiAq/l6VkqgCKaosz0TzdQZKB2",
+    "name": "Priya Patel",
+    "role": "student",
+    "status": "active",
+    "createdAt": "2026-10-28T18:20:33.671Z",
+    "updatedAt": "2026-10-28T18:20:33.671Z"
+  },
+  {
+    "id": "demo-student-0003-0003-000000000003",
+    "email": "rahul@demo.cpg",
+    "password": "$2b$12$jF.5hDAmQkczSGKAX.GOlubtNAjPiAq/l6VkqgCKaosz0TzdQZKB2",
+    "name": "Rahul Kumar",
+    "role": "student",
+    "status": "active",
+    "createdAt": "2026-10-28T18:20:33.671Z",
+    "updatedAt": "2026-10-28T18:20:33.671Z"
+  },
+  {
+    "id": "demo-faculty-0001-0001-000000000001",
+    "email": "faculty@demo.cpg",
+    "password": "$2b$12$jF.5hDAmQkczSGKAX.GOlubtNAjPiAq/l6VkqgCKaosz0TzdQZKB2",
+    "name": "Dr. Meera Nair",
+    "role": "faculty",
+    "status": "active",
+    "createdAt": "2026-10-28T18:20:33.671Z",
+    "updatedAt": "2026-10-28T18:20:33.671Z"
+  },
+  {
+    "id": "5ef6f3a0-f0bb-4e30-8e81-fd97e3bac407",
+    "email": "admin@cpg.local",
+    "password": "$2b$12$p3Avg4w1h8PB4msJ6SNpVuO2i.2RiRtsqpKvqFu2zpJbO9nBeX1Ty",
+    "name": "System Administrator",
+    "role": "admin",
+    "status": "active",
+    "createdAt": "2026-10-28T18:20:39.727Z",
+    "updatedAt": "2026-10-28T18:20:39.729Z"
+  },
+  {
+    "id": "34543dc4-bc94-4391-8ea2-2e621f9e184b",
+    "name": "New Name",
+    "email": "update@unit.cpg",
+    "role": "student",
+    "createdAt": "2026-10-28T18:21:27.559Z",
+    "updatedAt": "2026-10-28T18:21:27.571Z"
+  },
+  {
+    "id": "99ba3fab-178f-4c04-b2ec-96976d8e4fc9",
+    "email": "elig_1793211687581@test.cpg",
+    "role": "student",
+    "name": "Eligible Candidate",
+    "createdAt": "2026-10-28T18:21:27.591Z",
+    "updatedAt": "2026-10-28T18:21:27.591Z"
+  },
+  {
+    "id": "607159c9-4ac7-4c5c-ada1-c367c55d712c",
+    "email": "elig_1793211754198@test.cpg",
+    "role": "student",
+    "name": "Eligible Candidate",
+    "createdAt": "2026-10-28T18:22:34.207Z",
+    "updatedAt": "2026-10-28T18:22:34.207Z"
+  },
+  {
+    "id": "55320716-9d5f-444c-a382-b933ccaad3eb",
+    "name": "Findable User",
+    "email": "findable@unit.cpg",
+    "role": "student",
+    "createdAt": "2026-10-28T18:22:47.291Z",
+    "updatedAt": "2026-10-28T18:22:47.291Z"
+  },
+  {
+    "id": "18d76a5c-38c4-4143-be3e-5773cb985ae6",
+    "email": "elig_1793211767297@test.cpg",
+    "role": "student",
+    "name": "Eligible Candidate",
+    "createdAt": "2026-10-28T18:22:47.305Z",
+    "updatedAt": "2026-10-28T18:22:47.305Z"
+  },
+  {
+    "id": "fecd9c5d-5c44-4c28-bfd4-066ba3c8d9ca",
+    "email": "student_1793211769224@test.cpg",
+    "password": "$2b$12$Cco.RGnGwZsfqE0ivDE50.WUNhnSlk06bO3T3C8fNuZYKGg6pbs56",
+    "name": "Auto Test Student",
+    "role": "student",
+    "status": "active",
+    "createdAt": "2026-10-28T18:22:49.731Z",
+    "updatedAt": "2026-10-28T18:22:49.731Z"
+  },
+  {
+    "id": "0e87ea9c-f96e-4f50-a87d-7fa7301d4a0c",
+    "email": "dupe_1793211769749@test.cpg",
+    "password": "$2b$12$N2mA3qK5plcm2cNTtUpiEuRW19t9qK4KidY6NVLBkRT7dyidfh/9K",
+    "name": "User One",
+    "role": "student",
+    "status": "active",
+    "createdAt": "2026-10-28T18:22:50.100Z",
+    "updatedAt": "2026-10-28T18:22:50.100Z"
+  },
+  {
+    "id": "9f4fbe54-59bd-46c0-9dc0-a344fc97215a",
+    "email": "student_1793211843062@test.cpg",
+    "password": "$2b$12$nX42/0oS2x3WLNk/NCkfyOgdiMq4Sau6Cph1UtXSXmi3SM/qSBSMa",
+    "name": "Auto Test Student",
+    "role": "student",
+    "status": "active",
+    "createdAt": "2026-10-28T18:24:03.473Z",
+    "updatedAt": "2026-10-28T18:24:03.473Z"
+  },
+  {
+    "id": "71dc5443-fe10-43f9-bbf7-f6959c5042e8",
+    "email": "dupe_1793211843486@test.cpg",
+    "password": "$2b$12$jg1hg3v/jeaw8g6isbmbDefffUbo/xvHhxaKnQ8jK76Hev.ICb4B2",
+    "name": "User One",
+    "role": "student",
+    "status": "active",
+    "createdAt": "2026-10-28T18:24:03.849Z",
+    "updatedAt": "2026-10-28T18:24:03.849Z"
+  },
+  {
+    "id": "e13296ba-1850-4985-9902-88b2dea5dc47",
+    "email": "elig_1793211844511@test.cpg",
+    "role": "student",
+    "name": "Eligible Candidate",
+    "createdAt": "2026-10-28T18:24:04.519Z",
+    "updatedAt": "2026-10-28T18:24:04.519Z"
+  }
+]

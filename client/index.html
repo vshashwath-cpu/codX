@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>College Placement Guide</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#2563eb">
+  <link rel="stylesheet" href="/css/styles.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+  <!-- Offline / Sync Status Bar -->
+  <div id="offline-bar" class="status-bar status-bar-warning hidden"></div>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="sidebar hidden">
+      <div class="sidebar-header">
+        <div class="brand-logo">CPG</div>
+        <div class="brand-title">
+          <span class="brand-name">Placement Guide</span>
+          <span class="brand-sub">Campus Portal</span>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <!-- Common -->
+        <a href="#dashboard" class="nav-item" data-role="all">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+
+        <!-- Student Links -->
+        <a href="#drives" class="nav-item" data-role="student">
+          <span class="nav-icon">🏢</span>
+          <span class="nav-label">Placement Drives</span>
+        </a>
+        <a href="#applications" class="nav-item" data-role="student">
+          <span class="nav-icon">📝</span>
+          <span class="nav-label">My Applications</span>
+        </a>
+        <a href="#resume-builder" class="nav-item" data-role="student">
+          <span class="nav-icon">📄</span>
+          <span class="nav-label">Resume Builder</span>
+        </a>
+        <a href="#profile" class="nav-item" data-role="student">
+          <span class="nav-icon">👤</span>
+          <span class="nav-label">My Profile</span>
+        </a>
+
+        <!-- Faculty / TPO Links -->
+        <a href="#faculty/drives" class="nav-item" data-role="faculty">
+          <span class="nav-icon">🏢</span>
+          <span class="nav-label">Manage Drives</span>
+        </a>
+        <a href="#faculty/applications" class="nav-item" data-role="faculty">
+          <span class="nav-icon">📋</span>
+          <span class="nav-label">Review Applications</span>
+        </a>
+
+        <!-- Admin Links -->
+        <a href="#admin/users" class="nav-item" data-role="admin">
+          <span class="nav-icon">👥</span>
+          <span class="nav-label">Users</span>
+        </a>
+        <a href="#admin/faculty-requests" class="nav-item" data-role="admin">
+          <span class="nav-icon">⏳</span>
+          <span class="nav-label">Faculty Requests</span>
+        </a>
+
+        <!-- Common bottom -->
+        <a href="#notifications" class="nav-item" data-role="all">
+          <span class="nav-icon">🔔</span>
+          <span class="nav-label">Notifications</span>
+          <span id="notif-badge" class="badge badge-danger badge-pill hidden">0</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-profile-summary">
+          <div class="user-avatar">👤</div>
+          <div class="user-details">
+            <div id="user-display" class="font-medium text-sm truncate"></div>
+            <div id="user-role-badge" class="badge badge-xs"></div>
+          </div>
+        </div>
+        <button id="logout-btn" class="btn btn-xs btn-ghost mt-2 w-full text-left">Logout</button>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-wrapper">
+      <div id="app-content" class="page-content">
+        <!-- Dynamically rendered page content -->
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Application Bootstrap Script -->
+  <script type="module">
+    import auth from './js/auth.js';
+    import sync from './js/sync.js';
+    import notifications from './js/notifications.js';
+    import dashboard from './js/dashboard.js';
+    import profile from './js/profile.js';
+    import placements from './js/placements.js';
+    import resumeBuilder from './js/resume-builder.js';
+    import api from './js/api.js';
+    import { escapeHtml, loadingSpinner, showToast } from './js/ui.js';
+
+    // Service Worker Registration
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(() => console.log('[PWA] Service Worker registered'))
+        .catch((err) => console.warn('[PWA] Service Worker registration failed:', err));
+    }
+
+    // Router function
+    async function router() {
+      const content = document.getElementById('app-content');
+      const hash = window.location.hash || '#dashboard';
+
+      // Update active nav link
+      document.querySelectorAll('.sidebar-nav .nav-item').forEach((link) => {
+        if (link.getAttribute('href') === hash) {
+          link.classList.add('active');
+        } else {
+          link.classList.remove('active');
+        }
+      });
+
+      // Authentication check
+      if (!auth.isAuthenticated()) {
+        const user = await auth.init();
+        if (!user) {
+          if (hash === '#register') {
+            renderRegisterPage(content);
+          } else {
+            renderLoginPage(content);
+          }
+          return;
+        }
+      }
+
+      // Route mapping
+      if (hash === '#login') {
+        renderLoginPage(content);
+      } else if (hash === '#register') {
+        renderRegisterPage(content);
+      } else if (hash === '#dashboard') {
+        await dashboard.render(content);
+      } else if (hash === '#profile') {
+        await profile.render(content);
+      } else if (hash === '#drives') {
+        await placements.renderDrivesPage(content);
+      } else if (hash.startsWith('#drives/')) {
+        const driveId = hash.replace('#drives/', '');
+        await placements.renderDriveDetail(content, driveId);
+      } else if (hash === '#applications') {
+        await placements.renderMyApplications(content);
+      } else if (hash === '#faculty/drives') {
+        await placements.renderManageDrives(content);
+      } else if (hash.startsWith('#faculty/applications')) {
+        await placements.renderReviewApplications(content);
+      } else if (hash === '#resume-builder') {
+        await resumeBuilder.render(content);
+      } else if (hash.startsWith('#resume-builder/')) {
+        const resumeId = hash.replace('#resume-builder/', '');
+        await resumeBuilder.render(content, resumeId);
+      } else if (hash === '#notifications') {
+        await notifications.renderPage(content);
+      } else if (hash === '#admin/users') {
+        await renderAdminUsersPage(content);
+      } else if (hash === '#admin/faculty-requests') {
+        await renderAdminFacultyRequestsPage(content);
+      } else {
+        await dashboard.render(content);
+      }
+    }
+
+    // Login Page
+    function renderLoginPage(container) {
+      auth.updateNav();
+      container.innerHTML = `
+        <div class="auth-container">
+          <div class="auth-card card">
+            <div class="text-center mb-6">
+              <h1 class="text-2xl font-bold text-primary">College Placement Guide</h1>
+              <p class="text-muted text-sm mt-1">Sign in to your account</p>
+            </div>
+            <form id="login-form" class="space-y-4">
+              <div class="form-group">
+                <label class="form-label" for="login-email">Email Address</label>
+                <input type="email" id="login-email" class="form-input" required placeholder="student@demo.cpg">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="login-password">Password</label>
+                <input type="password" id="login-password" class="form-input" required placeholder="••••••••">
+              </div>
+              <button type="submit" class="btn btn-primary w-full mt-2">Sign In</button>
+            </form>
+            <div class="text-center mt-6 text-sm text-muted">
+              Don't have an account? <a href="#register" class="text-primary font-medium">Register here</a>
+            </div>
+            <div class="mt-6 p-4 bg-gray-50 rounded text-xs text-muted border">
+              <strong>Demo Accounts:</strong><br>
+              Student: <code>student@demo.cpg</code> / <code>Demo@1234</code><br>
+              Faculty: <code>faculty@demo.cpg</code> / <code>Demo@1234</code>
+            </div>
+          </div>
+        </div>
+      `;
+
+      container.querySelector('#login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = container.querySelector('#login-email').value.trim();
+        const password = container.querySelector('#login-password').value;
+        const res = await auth.login(email, password);
+        if (!res.success) {
+          showToast(res.error, 'error');
+        }
+      });
+    }
+
+    // Register Page
+    function renderRegisterPage(container) {
+      auth.updateNav();
+      container.innerHTML = `
+        <div class="auth-container">
+          <div class="auth-card card">
+            <div class="text-center mb-6">
+              <h1 class="text-2xl font-bold text-primary">Create Account</h1>
+              <p class="text-muted text-sm mt-1">Join the campus placement portal</p>
+            </div>
+            <form id="register-form" class="space-y-4">
+              <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" id="reg-name" class="form-input" required placeholder="Aarav Sharma">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" id="reg-email" class="form-input" required placeholder="aarav@college.edu">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Account Role</label>
+                <select id="reg-role" class="form-select" required>
+                  <option value="student">Student</option>
+                  <option value="faculty">Faculty / Placement Officer</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Password (min 8 chars)</label>
+                <input type="password" id="reg-password" class="form-input" required minlength="8" placeholder="••••••••">
+              </div>
+              <button type="submit" class="btn btn-primary w-full mt-2">Register</button>
+            </form>
+            <div class="text-center mt-6 text-sm text-muted">
+              Already have an account? <a href="#login" class="text-primary font-medium">Sign in</a>
+            </div>
+          </div>
+        </div>
+      `;
+
+      container.querySelector('#register-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const data = {
+          name: container.querySelector('#reg-name').value.trim(),
+          email: container.querySelector('#reg-email').value.trim(),
+          role: container.querySelector('#reg-role').value,
+          password: container.querySelector('#reg-password').value,
+        };
+        const res = await auth.register(data);
+        if (!res.success) {
+          showToast(res.error, 'error');
+        }
+      });
+    }
+
+    // Admin Users Page
+    async function renderAdminUsersPage(container) {
+      container.innerHTML = loadingSpinner('Loading users...');
+      try {
+        const res = await api.getUsers();
+        const users = res.users || [];
+        container.innerHTML = `
+          <div class="page-header">
+            <h1 class="page-title">User Management</h1>
+            <p class="page-subtitle">Manage system users, change roles, and update account statuses.</p>
+          </div>
+          <div class="card">
+            <div class="table-responsive">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${users.map((u) => `
+                    <tr>
+                      <td><strong>${escapeHtml(u.name)}</strong></td>
+                      <td>${escapeHtml(u.email)}</td>
+                      <td><span class="badge badge-info">${u.role}</span></td>
+                      <td><span class="badge ${u.status === 'active' ? 'badge-active' : 'badge-danger'}">${u.status}</span></td>
+                      <td>
+                        <button class="btn btn-xs btn-ghost toggle-user-status-btn" data-id="${u.id}" data-status="${u.status}">
+                          ${u.status === 'active' ? 'Suspend' : 'Activate'}
+                        </button>
+                      </td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        `;
+
+        container.querySelectorAll('.toggle-user-status-btn').forEach((btn) => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            const current = e.target.getAttribute('data-status');
+            const next = current === 'active' ? 'suspended' : 'active';
+            await api.updateUserStatus(id, next);
+            showToast(`User status updated to ${next}`, 'success');
+            renderAdminUsersPage(container);
+          });
+        });
+      } catch (err) {
+        container.innerHTML = `<div class="error-banner">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    // Admin Faculty Requests Page
+    async function renderAdminFacultyRequestsPage(container) {
+      container.innerHTML = loadingSpinner('Loading requests...');
+      try {
+        const res = await api.getFacultyRequests();
+        const reqs = res.requests || [];
+        container.innerHTML = `
+          <div class="page-header">
+            <h1 class="page-title">Faculty / TPO Access Requests</h1>
+            <p class="page-subtitle">Review and approve faculty registrations before they can access placement tools.</p>
+          </div>
+          <div class="card">
+            ${reqs.length === 0 ? `<div class="p-6 text-center text-muted">No pending faculty requests.</div>` : `
+              <div class="table-responsive">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Requested At</th>
+                      <th>Status</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${reqs.map((r) => `
+                      <tr>
+                        <td><strong>${escapeHtml(r.name)}</strong></td>
+                        <td>${escapeHtml(r.email)}</td>
+                        <td>${new Date(r.requestedAt).toLocaleDateString()}</td>
+                        <td><span class="badge badge-warning">${r.status}</span></td>
+                        <td class="flex gap-2">
+                          <button class="btn btn-xs btn-success approve-faculty-btn" data-id="${r.userId}">Approve</button>
+                          <button class="btn btn-xs btn-danger reject-faculty-btn" data-id="${r.userId}">Reject</button>
+                        </td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
+              </div>
+            `}
+          </div>
+        `;
+
+        container.querySelectorAll('.approve-faculty-btn').forEach((btn) => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            await api.handleFacultyRequest(id, 'approve');
+            showToast('Faculty request approved!', 'success');
+            renderAdminFacultyRequestsPage(container);
+          });
+        });
+
+        container.querySelectorAll('.reject-faculty-btn').forEach((btn) => {
+          btn.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            await api.handleFacultyRequest(id, 'reject');
+            showToast('Faculty request rejected', 'info');
+            renderAdminFacultyRequestsPage(container);
+          });
+        });
+      } catch (err) {
+        container.innerHTML = `<div class="error-banner">${escapeHtml(err.message)}</div>`;
+      }
+    }
+
+    // App Initialization
+    window.addEventListener('DOMContentLoaded', async () => {
+      sync.init();
+      await auth.init();
+      notifications.init();
+
+      // Logout handler
+      document.getElementById('logout-btn')?.addEventListener('click', () => auth.logout());
+
+      // Router listeners
+      window.addEventListener('hashchange', router);
+      router();
+    });
+  </script>
+</body>
+</html>

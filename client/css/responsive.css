@@ -1,0 +1,178 @@
+/* ============================================================
+   College Placement Guide — Responsive Overrides
+   ============================================================ */
+
+/* ── Tablet (<= 1024px) ─────────────────────────────────────── */
+@media (max-width: 1024px) {
+  :root {
+    --sidebar-width: 220px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .drives-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+
+  .resume-editor-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .resume-preview-panel {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* ── Mobile (<= 768px) ──────────────────────────────────────── */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 0px;
+    --header-height: 56px;
+  }
+
+  /* Sidebar Drawer */
+  .sidebar {
+    transform: translateX(-100%);
+    width: 260px;
+    z-index: 200;
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: var(--shadow-xl);
+  }
+
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 150;
+  }
+
+  .sidebar-overlay.hidden {
+    display: none;
+  }
+
+  /* Hamburger Button */
+  .menu-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--color-gray-200);
+    border-radius: var(--radius-md);
+    background: var(--color-white);
+    cursor: pointer;
+    margin-right: var(--space-3);
+  }
+
+  /* Main offset */
+  .main-wrapper {
+    margin-left: 0;
+  }
+
+  /* Grids to single column */
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .drives-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row,
+  .form-grid-2,
+  .form-grid-3 {
+    grid-template-columns: 1fr;
+  }
+
+  /* Filters panel stack */
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters-bar .search-input {
+    max-width: none;
+  }
+
+  /* Modal on mobile */
+  .modal-dialog {
+    margin: var(--space-2);
+    max-width: calc(100vw - 16px);
+    max-height: calc(100vh - 32px);
+  }
+
+  /* Header adjustments */
+  .main-header {
+    padding: 0 var(--space-4);
+  }
+
+  .header-actions {
+    gap: var(--space-2);
+  }
+
+  .user-name-display {
+    display: none;
+  }
+
+  /* Page content padding */
+  .page-content {
+    padding: var(--space-4);
+  }
+
+  /* Charts */
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Tables horizontal scroll */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* ── Small Mobile (<= 480px) ────────────────────────────────── */
+@media (max-width: 480px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+  }
+
+  .page-header .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .btn-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-group .btn {
+    width: 100%;
+  }
+
+  .drive-card-footer {
+    flex-direction: column;
+    gap: var(--space-2);
+    align-items: stretch;
+  }
+
+  .drive-card-footer .btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .auth-card {
+    padding: var(--space-6);
+    margin: var(--space-3);
+  }
+}
