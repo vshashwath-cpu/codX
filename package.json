@@ -6,7 +6,6 @@
   "main": "server/src/server.js",
   "scripts": {
     "start": "node server/src/server.js",
-    "build": "node scripts/init-storage.js && node scripts/seed-demo-data.js",
     "dev": "node --watch server/src/server.js",
     "storage:init": "node scripts/init-storage.js",
     "data:seed": "node scripts/seed-demo-data.js",
