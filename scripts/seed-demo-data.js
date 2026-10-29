@@ -63,7 +63,7 @@ function mergeRecords(existing, newRecords) {
   return added;
 }
 
-async function seed() {
+export async function seed() {
   console.log('\n  College Placement Guide — Demo Data Seeder');
   console.log('  ' + '='.repeat(44) + '\n');
 
@@ -468,7 +468,11 @@ async function seed() {
   console.log('\n  ⚠ Change or remove these accounts before any deployment.\n');
 }
 
-seed().catch((err) => {
-  console.error('Seeding failed:', err.message);
-  process.exit(1);
-});
+export default seed;
+
+if (process.argv[1] && process.argv[1].includes('seed-demo-data')) {
+  seed().catch((err) => {
+    console.error('Seeding failed:', err.message);
+    process.exit(1);
+  });
+}

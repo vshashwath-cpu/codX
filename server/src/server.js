@@ -2,6 +2,7 @@ import env, { validateEnv } from './config/env.js';
 import { initializeStorage } from './storage/storage-init.js';
 import { createBackup } from './storage/backup-service.js';
 import { createApp } from './app.js';
+import { seed } from '../../scripts/seed-demo-data.js';
 
 async function start() {
   try {
@@ -10,6 +11,13 @@ async function start() {
 
     // Initialize storage
     await initializeStorage();
+
+    // Auto-seed demo recruitment drives and accounts
+    try {
+      await seed();
+    } catch (seedErr) {
+      console.warn('[Server] Auto-seed warning:', seedErr.message);
+    }
 
     // Optional startup backup
     if (env.BACKUP_ON_START) {
