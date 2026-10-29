@@ -7,10 +7,16 @@ const BASE_URL = '';
 
 async function request(endpoint, options = {}) {
   const url = `${BASE_URL}${endpoint}`;
+  const token = localStorage.getItem('cpg_token');
+  const authHeaders = token
+    ? { 'Authorization': `Bearer ${token}`, 'X-Session-Token': token }
+    : {};
+
   const config = {
     credentials: 'include',
     headers: {
       'Accept': 'application/json',
+      ...authHeaders,
       ...options.headers,
     },
     ...options,
@@ -40,6 +46,10 @@ async function request(endpoint, options = {}) {
     const data = await response.json();
 
     if (!response.ok) {
+      if (response.status === 401 && !endpoint.includes('/api/auth/login') && !endpoint.includes('/api/auth/register')) {
+        localStorage.removeItem('cpg_token');
+        localStorage.removeItem('cpg_user');
+      }
       return {
         success: false,
         error: data.error || `Request failed (${response.status})`,

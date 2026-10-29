@@ -35,6 +35,10 @@ export const dashboard = {
     try {
       const res = await api.getStudentDashboard();
       if (!res.success) {
+        if (res.status === 401) {
+          auth.logout();
+          return;
+        }
         container.innerHTML = `<div class="error-banner">${escapeHtml(res.error)}</div>`;
         return;
       }
@@ -172,6 +176,10 @@ export const dashboard = {
     try {
       const res = await api.getFacultyDashboard();
       if (!res.success) {
+        if (res.status === 401) {
+          auth.logout();
+          return;
+        }
         container.innerHTML = `<div class="error-banner">${escapeHtml(res.error)}</div>`;
         return;
       }
@@ -272,6 +280,10 @@ export const dashboard = {
     try {
       const res = await api.getAdminDashboard();
       if (!res.success) {
+        if (res.status === 401) {
+          auth.logout();
+          return;
+        }
         container.innerHTML = `<div class="error-banner">${escapeHtml(res.error)}</div>`;
         return;
       }

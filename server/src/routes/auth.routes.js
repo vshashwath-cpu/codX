@@ -10,6 +10,7 @@ import {
   findById,
 } from '../storage/json-store.js';
 import { createNotification } from '../services/notification.service.js';
+import { createToken } from '../utils/token.js';
 
 const router = Router();
 
@@ -91,12 +92,26 @@ router.post(
 
       // Strip password from response
       const { password: _pw, ...safeUser } = user;
+      const token = user.role === 'student' ? createToken({
+        userId: user.id,
+        role: user.role,
+        email: user.email,
+      }) : undefined;
 
-      return res.status(201).json({
-        success: true,
-        user: safeUser,
-        data: safeUser,
-      });
+      const sendRegisterRes = () => {
+        return res.status(201).json({
+          success: true,
+          token,
+          user: safeUser,
+          data: safeUser,
+        });
+      };
+
+      if (req.session && req.session.save) {
+        req.session.save(() => sendRegisterRes());
+      } else {
+        sendRegisterRes();
+      }
     } catch (err) {
       console.error('[Auth] Register error:', err);
       return res.status(500).json({
@@ -157,13 +172,31 @@ router.post('/login', validate({ body: loginSchema }), async (req, res) => {
     req.session.role = user.role;
     req.session.email = user.email;
 
+    const token = createToken({
+      userId: user.id,
+      role: user.role,
+      email: user.email,
+    });
+
     const { password: _pw, ...safeUser } = user;
 
-    return res.status(200).json({
-      success: true,
-      user: safeUser,
-      data: safeUser,
-    });
+    const sendLoginRes = () => {
+      return res.status(200).json({
+        success: true,
+        token,
+        user: safeUser,
+        data: safeUser,
+      });
+    };
+
+    if (req.session && req.session.save) {
+      req.session.save((saveErr) => {
+        if (saveErr) console.warn('[Auth] Session save warning:', saveErr);
+        sendLoginRes();
+      });
+    } else {
+      sendLoginRes();
+    }
   } catch (err) {
     console.error('[Auth] Login error:', err);
     return res.status(500).json({
@@ -185,6 +218,7 @@ router.post('/logout', (req, res) => {
         error: 'Logout failed.',
       });
     }
+    res.clearCookie('cpg.sid');
     res.clearCookie('connect.sid');
     return res.status(200).json({
       success: true,
@@ -207,9 +241,15 @@ router.get('/me', authenticate, async (req, res) => {
     }
 
     const { password: _pw, ...safeUser } = user;
+    const token = createToken({
+      userId: user.id,
+      role: user.role,
+      email: user.email,
+    });
 
     return res.status(200).json({
       success: true,
+      token,
       user: safeUser,
       data: safeUser,
     });

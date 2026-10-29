@@ -19,11 +19,15 @@ import notificationsRoutes from './routes/notifications.routes.js';
 import reportsRoutes from './routes/reports.routes.js';
 import adminRoutes from './routes/admin.routes.js';
 import syncRoutes from './routes/sync.routes.js';
+import { verifyToken } from './utils/token.js';
 
 const LokiSessionStore = LokiStore(session);
 
 export function createApp() {
   const app = express();
+
+  // Trust proxy for reverse proxies (Render, Vercel, Nginx, Cloudflare)
+  app.set('trust proxy', 1);
 
   // Security headers
   app.use(helmet({
@@ -80,11 +84,31 @@ export function createApp() {
     name: 'cpg.sid',
     cookie: {
       httpOnly: true,
-      secure: env.NODE_ENV === 'production',
+      secure: 'auto', // Correctly detects HTTPS when behind proxy (Render/Vercel)
       sameSite: 'lax',
       maxAge: 24 * 60 * 60 * 1000, // 1 day
     },
   }));
+
+  // Seamless Token / Header authentication fallback
+  app.use((req, res, next) => {
+    if (!req.session) {
+      req.session = {};
+    }
+    if (!req.session.userId) {
+      const authHeader = req.headers.authorization || req.headers['x-session-token'];
+      if (authHeader) {
+        const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : authHeader;
+        const decoded = verifyToken(token);
+        if (decoded && decoded.userId) {
+          req.session.userId = decoded.userId;
+          req.session.role = decoded.role;
+          req.session.email = decoded.email;
+        }
+      }
+    }
+    next();
+  });
 
   // Serve static frontend files
   app.use(express.static(env.CLIENT_DIR, {

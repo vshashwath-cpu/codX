@@ -6,8 +6,8 @@
   <title>College Placement Guide</title>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#2563eb">
-  <link rel="stylesheet" href="/css/styles.css?v=4">
-  <link rel="stylesheet" href="/css/responsive.css?v=4">
+  <link rel="stylesheet" href="/css/styles.css?v=6">
+  <link rel="stylesheet" href="/css/responsive.css?v=6">
 </head>
 <body>
   <!-- Offline / Sync Status Bar -->
@@ -143,16 +143,26 @@
       });
 
       // Authentication check
+      const publicRoutes = ['#login', '#register'];
       if (!auth.isAuthenticated()) {
         const user = await auth.init();
         if (!user) {
           if (hash === '#register') {
             renderRegisterPage(content);
           } else {
+            if (hash !== '#login') {
+              window.location.hash = '#login';
+            }
             renderLoginPage(content);
           }
           return;
         }
+      }
+
+      // If already logged in and visiting login/register, redirect to dashboard
+      if (auth.isAuthenticated() && publicRoutes.includes(hash)) {
+        window.location.hash = '#dashboard';
+        return;
       }
 
       // Route mapping
