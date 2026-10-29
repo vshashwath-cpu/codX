@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cpg-shell-v1';
+const CACHE_NAME = 'cpg-shell-v2';
 
 const STATIC_ASSETS = [
   '/',
