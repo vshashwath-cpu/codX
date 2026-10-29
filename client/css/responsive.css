@@ -5,7 +5,17 @@
 /* ── Tablet (<= 1024px) ─────────────────────────────────────── */
 @media (max-width: 1024px) {
   :root {
-    --sidebar-width: 220px;
+    --sidebar-width: 0px;
+  }
+
+  .navbar-container {
+    padding: 0 var(--space-4);
+  }
+
+  .navbar-nav .nav-item {
+    padding: var(--space-2) var(--space-2);
+    font-size: var(--text-xs);
+    gap: var(--space-1);
   }
 
   .stats-grid {
@@ -33,47 +43,68 @@
     --header-height: 56px;
   }
 
-  /* Sidebar Drawer */
-  .sidebar {
-    transform: translateX(-100%);
-    width: 260px;
-    z-index: 200;
+  /* Top Navbar Responsive */
+  .navbar-container {
+    padding: var(--space-2) var(--space-4);
+    min-height: 56px;
+    flex-wrap: wrap;
+    align-items: center;
   }
 
-  .sidebar.open {
-    transform: translateX(0);
-    box-shadow: var(--shadow-xl);
+  .navbar-brand {
+    order: 1;
   }
 
-  .sidebar-overlay {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 150;
+  .nav-toggle-btn {
+    display: flex;
+    order: 2;
+    margin-left: auto;
   }
 
-  .sidebar-overlay.hidden {
+  .navbar-right {
+    order: 3;
+    margin-left: var(--space-2);
+    gap: var(--space-2);
+  }
+
+  .navbar-right .user-details {
     display: none;
   }
 
-  /* Hamburger Button */
-  .menu-toggle-btn {
+  /* Collapsible mobile navigation menu */
+  .navbar-nav {
+    display: none;
+    order: 4;
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--space-3) 0;
+    margin-top: var(--space-2);
+    border-top: 1px solid var(--color-gray-800);
+    gap: var(--space-1);
+    animation: fadeIn 0.2s ease-in-out;
+  }
+
+  .navbar-nav.is-open {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-    border: 1px solid var(--color-gray-200);
+  }
+
+  .navbar-nav .nav-item {
+    width: 100%;
+    padding: var(--space-3) var(--space-3);
+    font-size: var(--text-sm);
     border-radius: var(--radius-md);
-    background: var(--color-white);
-    cursor: pointer;
-    margin-right: var(--space-3);
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 
   /* Main offset */
   .main-wrapper {
-    margin-left: 0;
+    margin-left: 0 !important;
+    width: 100% !important;
   }
 
   /* Grids to single column */

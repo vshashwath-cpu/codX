@@ -6,88 +6,97 @@
   <title>College Placement Guide</title>
   <link rel="manifest" href="/manifest.json">
   <meta name="theme-color" content="#2563eb">
-  <link rel="stylesheet" href="/css/styles.css">
-  <link rel="stylesheet" href="/css/responsive.css">
+  <link rel="stylesheet" href="/css/styles.css?v=4">
+  <link rel="stylesheet" href="/css/responsive.css?v=4">
 </head>
 <body>
   <!-- Offline / Sync Status Bar -->
   <div id="offline-bar" class="status-bar status-bar-warning hidden"></div>
 
   <div class="app-container">
-    <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="sidebar hidden">
-      <div class="sidebar-header">
-        <div class="brand-logo">CPG</div>
-        <div class="brand-title">
-          <span class="brand-name">Placement Guide</span>
-          <span class="brand-sub">Campus Portal</span>
-        </div>
-      </div>
-
-      <nav class="sidebar-nav">
-        <!-- Common -->
-        <a href="#dashboard" class="nav-item" data-role="all">
-          <span class="nav-icon">📊</span>
-          <span class="nav-label">Dashboard</span>
-        </a>
-
-        <!-- Student Links -->
-        <a href="#drives" class="nav-item" data-role="student">
-          <span class="nav-icon">🏢</span>
-          <span class="nav-label">Placement Drives</span>
-        </a>
-        <a href="#applications" class="nav-item" data-role="student">
-          <span class="nav-icon">📝</span>
-          <span class="nav-label">My Applications</span>
-        </a>
-        <a href="#resume-builder" class="nav-item" data-role="student">
-          <span class="nav-icon">📄</span>
-          <span class="nav-label">Resume Builder</span>
-        </a>
-        <a href="#profile" class="nav-item" data-role="student">
-          <span class="nav-icon">👤</span>
-          <span class="nav-label">My Profile</span>
-        </a>
-
-        <!-- Faculty / TPO Links -->
-        <a href="#faculty/drives" class="nav-item" data-role="faculty">
-          <span class="nav-icon">🏢</span>
-          <span class="nav-label">Manage Drives</span>
-        </a>
-        <a href="#faculty/applications" class="nav-item" data-role="faculty">
-          <span class="nav-icon">📋</span>
-          <span class="nav-label">Review Applications</span>
-        </a>
-
-        <!-- Admin Links -->
-        <a href="#admin/users" class="nav-item" data-role="admin">
-          <span class="nav-icon">👥</span>
-          <span class="nav-label">Users</span>
-        </a>
-        <a href="#admin/faculty-requests" class="nav-item" data-role="admin">
-          <span class="nav-icon">⏳</span>
-          <span class="nav-label">Faculty Requests</span>
-        </a>
-
-        <!-- Common bottom -->
-        <a href="#notifications" class="nav-item" data-role="all">
-          <span class="nav-icon">🔔</span>
-          <span class="nav-label">Notifications</span>
-          <span id="notif-badge" class="badge badge-danger badge-pill hidden">0</span>
-        </a>
-      </nav>
-
-      <div class="sidebar-footer">
-        <div class="user-profile-summary">
-          <div class="user-avatar">👤</div>
-          <div class="user-details">
-            <div id="user-display" class="font-medium text-sm truncate"></div>
-            <div id="user-role-badge" class="badge badge-xs"></div>
+    <!-- Top Navigation Bar -->
+    <header id="sidebar" class="top-navbar hidden">
+      <div class="navbar-container">
+        <a href="#dashboard" class="navbar-brand">
+          <div class="brand-logo">CPG</div>
+          <div class="brand-title">
+            <span class="brand-name">Placement Guide</span>
+            <span class="brand-sub">Campus Portal</span>
           </div>
+        </a>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button id="nav-toggle-btn" class="nav-toggle-btn" aria-label="Toggle navigation menu" type="button">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+
+        <nav id="navbar-menu" class="navbar-nav sidebar-nav">
+          <!-- Common -->
+          <a href="#dashboard" class="nav-item" data-role="all">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Dashboard</span>
+          </a>
+
+          <!-- Student Links -->
+          <a href="#drives" class="nav-item" data-role="student">
+            <span class="nav-icon">🏢</span>
+            <span class="nav-label">Placement Drives</span>
+          </a>
+          <a href="#applications" class="nav-item" data-role="student">
+            <span class="nav-icon">📝</span>
+            <span class="nav-label">My Applications</span>
+          </a>
+          <a href="#resume-builder" class="nav-item" data-role="student">
+            <span class="nav-icon">📄</span>
+            <span class="nav-label">Resume Builder</span>
+          </a>
+          <a href="#profile" class="nav-item" data-role="student">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label">My Profile</span>
+          </a>
+
+          <!-- Faculty / TPO Links -->
+          <a href="#faculty/drives" class="nav-item" data-role="faculty">
+            <span class="nav-icon">🏢</span>
+            <span class="nav-label">Manage Drives</span>
+          </a>
+          <a href="#faculty/applications" class="nav-item" data-role="faculty">
+            <span class="nav-icon">📋</span>
+            <span class="nav-label">Review Applications</span>
+          </a>
+
+          <!-- Admin Links -->
+          <a href="#admin/users" class="nav-item" data-role="admin">
+            <span class="nav-icon">👥</span>
+            <span class="nav-label">Users</span>
+          </a>
+          <a href="#admin/faculty-requests" class="nav-item" data-role="admin">
+            <span class="nav-icon">⏳</span>
+            <span class="nav-label">Faculty Requests</span>
+          </a>
+
+          <!-- Common bottom -->
+          <a href="#notifications" class="nav-item" data-role="all">
+            <span class="nav-icon">🔔</span>
+            <span class="nav-label">Notifications</span>
+            <span id="notif-badge" class="badge badge-danger badge-pill hidden">0</span>
+          </a>
+        </nav>
+
+        <div class="navbar-right">
+          <div class="user-profile-summary">
+            <div class="user-avatar">👤</div>
+            <div class="user-details">
+              <div id="user-display" class="font-medium text-sm truncate"></div>
+              <div id="user-role-badge" class="badge badge-xs"></div>
+            </div>
+          </div>
+          <button id="logout-btn" class="btn btn-xs btn-outline-light logout-btn">Logout</button>
         </div>
-        <button id="logout-btn" class="btn btn-xs btn-ghost mt-2 w-full text-left">Logout</button>
       </div>
-    </aside>
+    </header>
 
     <!-- Main Content Area -->
     <main class="main-wrapper">
@@ -409,6 +418,22 @@
       sync.init();
       await auth.init();
       notifications.init();
+
+      // Mobile navigation toggle
+      const navToggleBtn = document.getElementById('nav-toggle-btn');
+      const navMenu = document.getElementById('navbar-menu');
+      navToggleBtn?.addEventListener('click', () => {
+        navMenu?.classList.toggle('is-open');
+        navToggleBtn.classList.toggle('is-active');
+      });
+
+      // Close mobile navigation when any link is clicked
+      document.querySelectorAll('.navbar-nav .nav-item').forEach((item) => {
+        item.addEventListener('click', () => {
+          navMenu?.classList.remove('is-open');
+          navToggleBtn?.classList.remove('is-active');
+        });
+      });
 
       // Logout handler
       document.getElementById('logout-btn')?.addEventListener('click', () => auth.logout());
