@@ -5,6 +5,7 @@ import {
   readCollection,
   findRecords,
   findOne,
+  findById,
   countRecords,
 } from '../storage/json-store.js';
 
