@@ -11,6 +11,7 @@ import {
   readCollection,
 } from '../storage/json-store.js';
 import { checkEligibility } from '../services/eligibility.service.js';
+import { applyForDrive } from '../services/application.service.js';
 
 const router = Router();
 
@@ -58,7 +59,7 @@ const statusSchema = z.object({
 });
 
 const driveParamsSchema = z.object({
-  driveId: z.string().uuid('Invalid drive ID'),
+  driveId: z.string().min(1, 'Drive ID is required'),
 });
 
 const listQuerySchema = z.object({
@@ -102,9 +103,15 @@ router.get('/', validate({ query: listQuerySchema }), async (req, res) => {
 
     let drives = await readCollection('placement-drives');
 
-    // Students can only see published drives
+    // Students can see published and closed drives
     if (req.session.role === 'student') {
-      drives = drives.filter((d) => d.status === 'published');
+      if (status === 'closed') {
+        drives = drives.filter((d) => d.status === 'closed');
+      } else if (status === 'published' || status === 'open') {
+        drives = drives.filter((d) => d.status === 'published');
+      } else {
+        drives = drives.filter((d) => d.status === 'published' || d.status === 'closed');
+      }
     } else if (status) {
       // Faculty/admin can filter by status
       drives = drives.filter((d) => d.status === status);
@@ -164,6 +171,7 @@ router.get('/', validate({ query: listQuerySchema }), async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      drives: paginatedDrives,
       data: paginatedDrives,
       pagination: {
         page: pageNum,
@@ -198,8 +206,8 @@ router.get(
         });
       }
 
-      // Students can only see published drives
-      if (req.session.role === 'student' && drive.status !== 'published') {
+      // Students can view published and closed drives
+      if (req.session.role === 'student' && drive.status !== 'published' && drive.status !== 'closed') {
         return res.status(404).json({
           success: false,
           error: 'Drive not found.',
@@ -208,6 +216,7 @@ router.get(
 
       return res.status(200).json({
         success: true,
+        drive,
         data: drive,
       });
     } catch (err) {
@@ -363,12 +372,47 @@ router.get(
       return res.status(200).json({
         success: true,
         data: result,
+        ...result,
       });
     } catch (err) {
       console.error('[Drives] Eligibility check error:', err);
       return res.status(500).json({
         success: false,
         error: 'Failed to check eligibility.',
+      });
+    }
+  }
+);
+
+// ---------------------------------------------------------------------------
+// POST /api/drives/:driveId/apply — student applies to a drive
+// ---------------------------------------------------------------------------
+router.post(
+  '/:driveId/apply',
+  authorize('student'),
+  validate({ params: driveParamsSchema }),
+  async (req, res) => {
+    try {
+      const result = await applyForDrive(
+        req.session.userId,
+        req.params.driveId,
+        req.body?.idempotencyKey
+      );
+
+      const appData = result.application || result;
+      return res.status(result.duplicate ? 200 : 201).json({
+        success: true,
+        duplicate: Boolean(result.duplicate),
+        data: appData,
+        application: appData,
+        message: result.duplicate
+          ? 'You have already applied for this drive.'
+          : 'Application submitted successfully!',
+      });
+    } catch (err) {
+      return res.status(err.status || 400).json({
+        success: false,
+        error: err.message || 'Failed to submit application.',
       });
     }
   }

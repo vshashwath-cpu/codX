@@ -19,11 +19,11 @@ const router = Router();
 // ---------------------------------------------------------------------------
 
 const driveParamsSchema = z.object({
-  driveId: z.string().uuid('Invalid drive ID'),
+  driveId: z.string().min(1, 'Drive ID is required'),
 });
 
 const applicationParamsSchema = z.object({
-  applicationId: z.string().uuid('Invalid application ID'),
+  applicationId: z.string().min(1, 'Application ID is required'),
 });
 
 const applySchema = z.object({
@@ -114,6 +114,7 @@ router.get('/', async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      applications,
       data: applications,
     });
   } catch (err) {

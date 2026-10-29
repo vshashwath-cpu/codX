@@ -100,6 +100,37 @@ export const dashboard = {
           </div>
         </div>
 
+        <!-- Featured / Upcoming Placement Drives Card -->
+        ${(d.upcomingDrives && d.upcomingDrives.length > 0) ? `
+          <div class="card mb-6 p-4">
+            <div class="card-header flex justify-between items-center mb-3">
+              <div>
+                <h3 class="card-title">Featured Campus Placement Drives</h3>
+                <p class="text-xs text-muted">Active opportunities with upcoming application deadlines</p>
+              </div>
+              <a href="#drives" class="btn btn-sm btn-secondary">Explore All Drives &rarr;</a>
+            </div>
+            <div class="upcoming-drives-grid">
+              ${d.upcomingDrives.map((drive) => `
+                <div class="upcoming-drive-item p-3 border rounded-lg flex justify-between items-center bg-gray-50 hover:bg-white transition">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <strong class="font-semibold text-sm text-body">${escapeHtml(drive.companyName)}</strong>
+                      ${drive.isSample ? '<span class="badge badge-sample">Sample</span>' : ''}
+                    </div>
+                    <div class="text-xs text-muted">${escapeHtml(drive.jobTitle)}</div>
+                    <div class="text-xs text-success font-bold mt-1">${escapeHtml(drive.salary || 'Competitive CTC')}</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-xs text-muted mb-1">⏳ ${formatDate(drive.applicationDeadline)}</div>
+                    <a href="#drives/${drive.id}" class="btn btn-xs btn-primary">View & Apply</a>
+                  </div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        ` : ''}
+
         <div class="grid-2-col gap-6">
           <!-- Recent Applications -->
           <div class="card">

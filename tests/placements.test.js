@@ -1,9 +1,10 @@
 import { describe, it, expect, beforeAll } from 'vitest';
 import { checkEligibility } from '../server/src/services/eligibility.service.js';
+import { applyForDrive } from '../server/src/services/application.service.js';
 import { insertRecord, deleteRecord } from '../server/src/storage/json-store.js';
 import { initializeStorage } from '../server/src/storage/storage-init.js';
 
-describe('Eligibility Service', () => {
+describe('Eligibility & Application Service', () => {
   let studentUser;
   let studentProfile;
   let drive;
@@ -57,5 +58,19 @@ describe('Eligibility Service', () => {
     expect(res.reasons.some((r) => r.includes('CGPA'))).toBe(true);
 
     await deleteRecord('placement-drives', highDrive.id);
+  });
+
+  it('should allow eligible student to apply for a placement drive', async () => {
+    const result = await applyForDrive(studentUser.id, drive.id);
+    expect(result.duplicate).toBe(false);
+    expect(result.application).toBeDefined();
+    expect(result.application.status).toBe('applied');
+    expect(result.application.driveId).toBe(drive.id);
+  });
+
+  it('should detect duplicate application when student applies again', async () => {
+    const result = await applyForDrive(studentUser.id, drive.id);
+    expect(result.duplicate).toBe(true);
+    expect(result.application).toBeDefined();
   });
 });

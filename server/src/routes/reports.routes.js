@@ -41,12 +41,62 @@ router.get('/dashboard/student', authorize('student'), async (req, res) => {
 
     const applicationsSummary = {
       total: applications.length,
-      pending: applications.filter((a) => a.status === 'pending').length,
-      reviewed: applications.filter((a) => a.status === 'reviewed').length,
+      applied: applications.filter((a) => a.status === 'applied' || a.status === 'pending').length,
+      underReview: applications.filter((a) => a.status === 'under-review' || a.status === 'reviewed').length,
       shortlisted: applications.filter((a) => a.status === 'shortlisted').length,
-      selected: applications.filter((a) => a.status === 'selected').length,
+      selected: applications.filter((a) => a.status === 'selected' || a.status === 'offered').length,
       rejected: applications.filter((a) => a.status === 'rejected').length,
     };
+
+    // Enrich recent applications with drive data
+    const recentApplications = await Promise.all(
+      applications
+        .sort((a, b) => new Date(b.appliedAt || b.createdAt || 0) - new Date(a.appliedAt || a.createdAt || 0))
+        .slice(0, 5)
+        .map(async (app) => {
+          const drive = await findById('placement-drives', app.driveId);
+          return {
+            id: app.id,
+            driveId: app.driveId,
+            companyName: drive?.companyName || 'Company',
+            jobTitle: drive?.jobTitle || 'Role',
+            salary: drive?.salary || '—',
+            appliedAt: app.appliedAt || app.createdAt,
+            status: app.status,
+          };
+        })
+    );
+
+    // Compute eligible count based on profile
+    let eligibleDrives = 0;
+    if (profile) {
+      for (const d of drives) {
+        const meetsCGPA = !d.minCGPA || (profile.cgpa && profile.cgpa >= d.minCGPA);
+        const meetsDept = !d.eligibleDepartments?.length || (profile.department && d.eligibleDepartments.map((x) => x.toLowerCase()).includes(profile.department.toLowerCase()));
+        const meetsGrad = !d.eligibleGraduationYears?.length || (profile.graduationYear && d.eligibleGraduationYears.includes(profile.graduationYear));
+        if (meetsCGPA && meetsDept && meetsGrad) {
+          eligibleDrives++;
+        }
+      }
+    } else {
+      eligibleDrives = drives.length;
+    }
+
+    // Top upcoming drives with earliest deadlines
+    const upcomingDrives = drives
+      .filter((d) => !d.applicationDeadline || new Date(d.applicationDeadline) >= new Date())
+      .sort((a, b) => new Date(a.applicationDeadline || 0) - new Date(b.applicationDeadline || 0))
+      .slice(0, 4)
+      .map((d) => ({
+        id: d.id,
+        companyName: d.companyName,
+        jobTitle: d.jobTitle,
+        salary: d.salary,
+        location: d.location,
+        applicationDeadline: d.applicationDeadline,
+        minCGPA: d.minCGPA,
+        isSample: Boolean(d.isSample),
+      }));
 
     // Recent notifications
     const allNotifications = await findRecords(
@@ -65,7 +115,10 @@ router.get('/dashboard/student', authorize('student'), async (req, res) => {
       data: {
         profileCompletion,
         availableDrives: drives.length,
+        eligibleDrives,
         applicationsSummary,
+        recentApplications,
+        upcomingDrives,
         recentNotifications,
       },
     });
