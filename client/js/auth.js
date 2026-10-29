@@ -32,13 +32,14 @@ export const auth = {
         this.updateNav();
       } catch {
         localStorage.removeItem(USER_KEY);
+        currentUser = null;
       }
     }
 
     // 2. Validate session with backend
     try {
       const res = await api.getMe();
-      if (res.success && res.user) {
+      if (res && res.success && res.user) {
         if (res.token) {
           localStorage.setItem(TOKEN_KEY, res.token);
         }
@@ -46,18 +47,25 @@ export const auth = {
         localStorage.setItem(USER_KEY, JSON.stringify(currentUser));
         this.updateNav();
         return currentUser;
+      } else {
+        // Backend rejected session (e.g. 401 Unauthorized, expired, or invalid)
+        currentUser = null;
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
+        this.updateNav();
+        return null;
       }
-    } catch { /* network or server error */ }
-
-    // If backend returns 401 or user not found, and no valid session
-    if (!localStorage.getItem(TOKEN_KEY)) {
+    } catch {
+      // Network error (offline mode) — only fall back to cached user if offline
+      if (typeof navigator !== 'undefined' && navigator.onLine === false && currentUser) {
+        return currentUser;
+      }
       currentUser = null;
+      localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
       this.updateNav();
       return null;
     }
-
-    return currentUser;
   },
 
   async login(email, password) {
@@ -137,5 +145,16 @@ export const auth = {
     });
   },
 };
+
+// Global expired session handler invoked by api.js on 401
+if (typeof window !== 'undefined') {
+  window.__cpg_onAuthExpired = () => {
+    currentUser = null;
+    auth.updateNav();
+    if (window.location.hash !== '#login' && window.location.hash !== '#register') {
+      window.location.hash = '#login';
+    }
+  };
+}
 
 export default auth;

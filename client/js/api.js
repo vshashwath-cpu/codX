@@ -49,6 +49,9 @@ async function request(endpoint, options = {}) {
       if (response.status === 401 && !endpoint.includes('/api/auth/login') && !endpoint.includes('/api/auth/register')) {
         localStorage.removeItem('cpg_token');
         localStorage.removeItem('cpg_user');
+        if (typeof window !== 'undefined' && typeof window.__cpg_onAuthExpired === 'function') {
+          window.__cpg_onAuthExpired();
+        }
       }
       return {
         success: false,
